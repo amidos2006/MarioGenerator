@@ -23,10 +23,10 @@ public class TestGenerator {
 		String[] lines = Files.readAllLines(f.toPath()).toArray(new String[0]);
 		library.addLevel(lines);
 	    }
-	    GeneticAlgorithm ga = new GeneticAlgorithm(library, 100, 28, 0.7, 0.3, 2, 4);
+	    GeneticAlgorithm ga = new GeneticAlgorithm(library, 100, 28, 0.9, 0.3, 1);
 	    Chromosome[] pop = ga.evolve(1000);
 	    for(int i=0; i<pop.length; i++){
-		System.out.println("index " + i + " fitness " + pop[i].getFitness());
+		System.out.println("index " + i + " constraints " + pop[i].getConstraints() + " fitness " + pop[i].getFitness());
 		System.out.println(pop[i]);
 	    }
 	} catch (Exception e) {

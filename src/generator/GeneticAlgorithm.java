@@ -1,5 +1,6 @@
 package generator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -28,13 +29,6 @@ public class GeneticAlgorithm {
 	this._elitism = elitism;
 	this._selectionMethod = selectionMethod;
 	this._rnd = new Random();
-    }
-    
-    private void calculateFitness(Chromosome[] pop){
-	for (Chromosome c : pop) {
-	    c.getFitness();
-	}
-	Arrays.sort(pop);
     }
     
     private Chromosome tournmentSelection(Chromosome[] pop){
@@ -67,7 +61,27 @@ public class GeneticAlgorithm {
 	}
 	return pop[pop.length - 1];
     }
+    
+    private Chromosome[][] getFeasibleInfeasible(Chromosome[] pop){
+	ArrayList<Chromosome> feasible = new ArrayList<Chromosome>();
+	ArrayList<Chromosome> infeasible = new ArrayList<Chromosome>();
+	for(int i=0; i<pop.length; i++) {
+	    if(pop[i].getConstraints() < 1) {
+		infeasible.add(pop[i]);
+	    }
+	    else {
+		feasible.add(pop[i]);
+	    }
+	}
+	return new Chromosome[][] {feasible.toArray(new Chromosome[0]), infeasible.toArray(new Chromosome[0]) };
+    }
 
+    private void calculateFitness(Chromosome[] pop) {
+	for (Chromosome c : pop) {
+	    c.calculateFitness();
+	}
+    }
+    
     public Chromosome[] evolve(double time) {
 	Chromosome[] currentPopulation = new Chromosome[this._populationSize];
 	for (int i = 0; i < currentPopulation.length; i++) {
@@ -78,16 +92,23 @@ public class GeneticAlgorithm {
 	Chromosome[] newPopulation = new Chromosome[currentPopulation.length];
 	while (System.currentTimeMillis() - startTime < time) {
 	    this.calculateFitness(currentPopulation);
+	    Chromosome[][] twoPop = this.getFeasibleInfeasible(currentPopulation);
+	    Arrays.sort(twoPop[0]);
+	    Arrays.sort(twoPop[1]);
 	    for (int i = 0; i < newPopulation.length - this._elitism; i++) {
-		Chromosome parent1 = this.rankSelection(currentPopulation);
+		Chromosome[] usedPopulation = twoPop[1];
+		if(this._rnd.nextDouble() < (double)(twoPop[0].length) / currentPopulation.length) {
+		    usedPopulation = twoPop[0];
+		}
+		Chromosome parent1 = this.rankSelection(usedPopulation);
 		if(this._selectionMethod > 0){
-		    parent1 = this.tournmentSelection(currentPopulation);
+		    parent1 = this.tournmentSelection(usedPopulation);
 		}
 		Chromosome child = parent1.clone();
 		if (this._rnd.nextDouble() < this._crossover) {
-		    Chromosome parent2 = this.rankSelection(currentPopulation);
+		    Chromosome parent2 = this.rankSelection(usedPopulation);
 		    if(this._selectionMethod > 0){
-			    parent2 = this.tournmentSelection(currentPopulation);
+			    parent2 = this.tournmentSelection(usedPopulation);
 		    }
 		    child = parent1.crossover(parent2);
 		}
@@ -97,7 +118,12 @@ public class GeneticAlgorithm {
 		newPopulation[i] = child;
 	    }
 	    for(int i=0; i<this._elitism; i++){
-		newPopulation[newPopulation.length - 1 - i] = currentPopulation[i];
+		if(i < twoPop[0].length) {
+		    newPopulation[newPopulation.length - 1 - i] = twoPop[0][i];
+		}
+		else {
+		    newPopulation[newPopulation.length - 1 - i] = twoPop[1][i];
+		}
 	    }
 	    currentPopulation = newPopulation;
 	}

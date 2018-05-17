@@ -22,9 +22,7 @@ public class LevelSlicesLibrary {
 	    for(int j=0; j<lines.length; j++){
 		    slice += lines[j].charAt(i);
 	    }
-	    if(!this.slices.contains(slice)){
-		this.slices.add(slice);
-	    }
+	    this.slices.add(slice);
 	}
 	this.arrayedSlices = this.slices.toArray(new String[0]);
     }
