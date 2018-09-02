@@ -1,29 +1,33 @@
-package generator;
+package fi2pop;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import shared.SlicesLibrary;
+
 public class GeneticAlgorithm {
     private int _populationSize;
     private int _chromosomeLength;
+    private int _appendingSize;
     private double _crossover;
     private double _mutation;
     private int _elitism;
     private int _selectionMethod;
     private Random _rnd;
-    private LevelSlicesLibrary _lib;
+    private SlicesLibrary _lib;
     
-    public GeneticAlgorithm(LevelSlicesLibrary lib, int populationSize, int chromosomeLength, double crossover,
-	    double mutation, int elitism) {
-	this(lib, populationSize, chromosomeLength, crossover, mutation, elitism, 0);
+    public GeneticAlgorithm(SlicesLibrary lib, int populationSize, int chromosomeLength, int appendingSize, double crossover,
+							double mutation, int elitism) {
+	this(lib, populationSize, chromosomeLength, appendingSize, crossover, mutation, elitism, 0);
     }
 
-    public GeneticAlgorithm(LevelSlicesLibrary lib, int populationSize, int chromosomeLength, double crossover,
-	    double mutation, int elitism, int selectionMethod) {
+    public GeneticAlgorithm(SlicesLibrary lib, int populationSize, int chromosomeLength, int appendingSize, double crossover,
+							double mutation, int elitism, int selectionMethod) {
 	this._lib = lib;
 	this._populationSize = populationSize;
 	this._chromosomeLength = chromosomeLength;
+	this._appendingSize = appendingSize;
 	this._crossover = crossover;
 	this._mutation = mutation;
 	this._elitism = elitism;
@@ -76,6 +80,47 @@ public class GeneticAlgorithm {
 	return new Chromosome[][] {feasible.toArray(new Chromosome[0]), infeasible.toArray(new Chromosome[0]) };
     }
 
+
+    public double averageFitness(Chromosome[] pop) {
+    	double fitAvg = 0;
+		for (Chromosome c : pop) {
+			fitAvg += c.getFitness();
+		}
+
+		return fitAvg / pop.length;
+	}
+
+	public double averageConstraint(Chromosome[] pop) {
+		double constAvg = 0;
+		for (Chromosome c : pop) {
+			constAvg += c.getConstraints();
+		}
+		return constAvg / pop.length;
+	}
+
+	public int getMaxFitnessIndex(Chromosome[] pop) {
+		double max = -100;
+		int maxIndex = -1;
+    	for (int i = 0; i < pop.length; i++) {
+			double fit = pop[i].getFitness();
+			if(fit > max) {
+				max = fit;
+				maxIndex = i;
+			}
+		}
+		return maxIndex;
+	}
+
+	public double getMaxFitness(Chromosome[] pop) {
+		double max = -100;
+		for (Chromosome c : pop) {
+			double fit = c.getFitness();
+			if(fit > max) {
+				max = fit;
+			}
+		}
+		return max;
+	}
     private void calculateFitness(Chromosome[] pop) {
 	for (Chromosome c : pop) {
 	    c.calculateFitness();
@@ -85,7 +130,7 @@ public class GeneticAlgorithm {
     public Chromosome[] evolve(double time) {
 	Chromosome[] currentPopulation = new Chromosome[this._populationSize];
 	for (int i = 0; i < currentPopulation.length; i++) {
-	    currentPopulation[i] = new Chromosome(this._rnd, this._lib, this._chromosomeLength);
+	    currentPopulation[i] = new Chromosome(this._rnd, this._lib, this._chromosomeLength, this._appendingSize);
 	    currentPopulation[i].randomInitialize();
 	}
 	long startTime = System.currentTimeMillis();

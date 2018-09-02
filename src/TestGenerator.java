@@ -2,14 +2,18 @@
 import java.io.File;
 import java.io.FileFilter;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Comparator;
 
-import generator.Chromosome;
-import generator.GeneticAlgorithm;
-import generator.LevelSlicesLibrary;
+import fi2pop.Chromosome;
+import fi2pop.GeneticAlgorithm;
+import shared.RepeatedLevelSlicesLibrary;
+import shared.SlicesLibrary;
+import shared.UniqueLevelSlicesLibrary;
 
 public class TestGenerator {
     public static void main(String[] args){
-	LevelSlicesLibrary library = new LevelSlicesLibrary();
+	SlicesLibrary library = new UniqueLevelSlicesLibrary();
 	
 	File directory = new File("levels/");
 	File[] files = directory.listFiles(new FileFilter() {
@@ -19,11 +23,15 @@ public class TestGenerator {
 	    }
 	});
 	try {
+	    Arrays.sort(files, new Comparator<File>() {
+                public int compare(File o1, File o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }});
 	    for(File f:files){
 		String[] lines = Files.readAllLines(f.toPath()).toArray(new String[0]);
 		library.addLevel(lines);
 	    }
-	    GeneticAlgorithm ga = new GeneticAlgorithm(library, 100, 28, 0.9, 0.3, 1);
+	    GeneticAlgorithm ga = new GeneticAlgorithm(library, 100, 28, 2, 0.7, 0.3, 1);
 	    Chromosome[] pop = ga.evolve(1000);
 	    for(int i=0; i<pop.length; i++){
 		System.out.println("index " + i + " constraints " + pop[i].getConstraints() + " fitness " + pop[i].getFitness());
