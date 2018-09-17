@@ -7,6 +7,7 @@ import java.util.Random;
 public class Cell {
     private double[] _dimensions;
     private ArrayList<Chromosome> _pop;
+    private Chromosome _elite;
     private int _size;
     private Random _rnd;
     
@@ -14,6 +15,7 @@ public class Cell {
 	this._dimensions = dimensions;
 	this._size = size;
 	this._pop = new ArrayList<Chromosome>();
+	this._elite = null;
 	this._rnd = rnd;
     }
     
@@ -21,32 +23,16 @@ public class Cell {
 	return this._dimensions;
     }
     
-    public Chromosome[] getFeasible(boolean descending) {
-	ArrayList<Chromosome> feasible = new ArrayList<Chromosome>();
-	for(Chromosome c:this._pop) {
-	    if(c.getConstraints() == 1) {
-		feasible.add(c);
-	    }
-	}
-	Collections.sort(feasible);
-	if(descending) {
-	    Collections.reverse(feasible);
-	}
-	return feasible.toArray(new Chromosome[0]);
+    public Chromosome getElite() {
+	return this._elite;
     }
     
     public Chromosome[] getInfeasible(boolean descending) {
-	ArrayList<Chromosome> infeasible = new ArrayList<Chromosome>();
-	for(Chromosome c:this._pop) {
-	    if(c.getConstraints() < 1) {
-		infeasible.add(c);
-	    }
-	}
-	Collections.sort(infeasible);
+	Collections.sort(this._pop);
 	if(descending) {
-	    Collections.reverse(infeasible);
+	    Collections.reverse(this._pop);
 	}
-	return infeasible.toArray(new Chromosome[0]);
+	return this._pop.toArray(new Chromosome[0]);
     }
     
     private Chromosome rankSelection(Chromosome[] pop) {
@@ -67,21 +53,24 @@ public class Cell {
 	return pop[pop.length - 1];
     }
     
-    public Chromosome getChromosome() {
-	Chromosome[] feasible = this.getFeasible(false);
+    public Chromosome getChromosome(double eliteProb) {
+	Chromosome elite = this.getElite();
 	Chromosome[] infeasible = this.getInfeasible(false);
-	if(this._rnd.nextDouble() < (1.0 * feasible.length) / (feasible.length + infeasible.length)) {
-	    return this.rankSelection(feasible);
+	if(infeasible.length == 0 || (elite != null && this._rnd.nextDouble() < eliteProb)) {
+	    return elite;
 	}
 	return this.rankSelection(infeasible);
     }
     
     public void setChromosome(Chromosome c) {
+	if(c.getConstraints() == 1) {
+	    if(this._elite == null || c.getFitness() > this._elite.getFitness()) {
+		this._elite = c;
+	    }
+	    return;
+	}
 	if(this._pop.size() >= this._size) {
 	    Chromosome[] chromosomes = this.getInfeasible(false);
-	    if(chromosomes.length == 0) {
-		chromosomes = this.getFeasible(false);
-	    }
 	    this._pop.remove(chromosomes[0]);
 	}
 	this._pop.add(c);

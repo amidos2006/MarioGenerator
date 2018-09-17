@@ -50,8 +50,15 @@ public class ChildRunner {
 	if(args.length > 3) {
 	    parameters.put("agentSTD", args[3]);
 	}
+	parameters.put("numTrials", "1");
+	if(args.length > 4) {
+	    parameters.put("agentSTD", args[4]);
+	}
 	ChildEvaluator child = new ChildEvaluator(id, size, parameters.get("inputFolder"), parameters.get("outputFolder"));
-	SlicesLibrary lib = new UniqueLevelSlicesLibrary();
+	SlicesLibrary lib = new RepeatedLevelSlicesLibrary();
+	if(parameters.get("slicesType").toLowerCase().contains("unique")) {
+	    lib = new UniqueLevelSlicesLibrary();
+	}
 	File directory = new File(parameters.get("levelFolder"));
         File[] files = directory.listFiles(new FileFilter() {
             @Override

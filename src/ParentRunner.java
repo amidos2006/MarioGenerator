@@ -67,7 +67,10 @@ public class ParentRunner {
 	} catch (IOException e1) {
 	    e1.printStackTrace();
 	}
-	SlicesLibrary lib = new UniqueLevelSlicesLibrary();
+	SlicesLibrary lib = new RepeatedLevelSlicesLibrary();
+	if(parameters.get("slicesType").toLowerCase().contains("unique")) {
+	    lib = new UniqueLevelSlicesLibrary();
+	}
 	File directory = new File(parameters.get("levelFolder"));
         File[] files = directory.listFiles(new FileFilter() {
             @Override
@@ -96,8 +99,9 @@ public class ParentRunner {
         double inbreeding = Double.parseDouble(parameters.get("inbreeding"));
         double crossover = Double.parseDouble(parameters.get("crossover"));
         double mutation = Double.parseDouble(parameters.get("mutation"));
+        double eliteProb = Double.parseDouble(parameters.get("eliteProb"));
         System.out.println("Initialize Map Elites");
-        MapElites map = new MapElites(lib, rnd, appendingSize, chromosomeLength, popSize, inbreeding, crossover, mutation);
+        MapElites map = new MapElites(lib, rnd, appendingSize, chromosomeLength, popSize, inbreeding, crossover, mutation, eliteProb);
         ParentEvaluator parent = new ParentEvaluator(parameters.get("inputFolder"), parameters.get("outputFolder"));
         System.out.println("First Batch of Chromosomes");
         Chromosome[] chromosomes = map.randomChromosomes(batchSize);

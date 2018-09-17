@@ -56,7 +56,8 @@ public class ChildEvaluator {
 	    for(int j=0; j<dimensions.length; j++) {
 		result += "," + dimensions[j];
 	    }
-	    writer.print(result);
+	    writer.println(result);
+	    writer.println(chromosomes[i].toString());
 	    writer.close();
 	}
     }

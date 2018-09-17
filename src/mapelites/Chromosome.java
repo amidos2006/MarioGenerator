@@ -24,7 +24,7 @@ public class Chromosome implements Comparable<Chromosome>{
 	this._appendingSize = appendingSize;
 	this._fitness = 0;
 	this._constraints = 0;
-	this._dimensions = new double[7];
+	this._dimensions = new double[8];
     }
     
     public void randomInitialize() {
@@ -60,37 +60,34 @@ public class Chromosome implements Comparable<Chromosome>{
 	RunMapEliteLevel test = new RunMapEliteLevel(this._rnd, parameters);
 	test.setLevel(this.toString(), this._appendingSize);
 	EvaluationInfo evalInfo = test.runLevel(false);
-	this._constraints = Math.min(1, evalInfo.lengthOfLevelPassedCells / (evalInfo.totalLengthOfLevelCells - this._appendingSize));
+	this._constraints = Math.min(1, (1.0 * evalInfo.lengthOfLevelPassedCells) / (evalInfo.totalLengthOfLevelCells - this._appendingSize));
 	if(evalInfo.numOfJumps != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[0] = Math.min(1, evalInfo.numOfJumps / 5.0);
+	    this._dimensions[0] = evalInfo.numOfJumps >= 1? 1:0;
 	}
 	if(evalInfo.jumpDistance != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[1] = Math.min(1, Math.floor(evalInfo.jumpDistance / 96.0));
+	    this._dimensions[1] = evalInfo.jumpDistance <= 36.0? 1:0;
 	}
-	if(evalInfo.stompKills != EvaluationInfo.MagicNumberUndef && evalInfo.totalKills > 0) {
-	    this._dimensions[2] = Math.min(1, evalInfo.stompKills / (1.0 * evalInfo.totalKills));
+	if(evalInfo.jumpDistance != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[2] = evalInfo.jumpDistance >= 96.0? 1:0;
 	}
-	if(evalInfo.shellKills != EvaluationInfo.MagicNumberUndef && evalInfo.totalKills > 0) {
-	    this._dimensions[3] = Math.min(1, evalInfo.shellKills / (1.0 * evalInfo.totalKills));
+	if(evalInfo.stompKills != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[3] = evalInfo.stompKills >= 1? 1:0;
 	}
-	if(evalInfo.totalKills != EvaluationInfo.MagicNumberUndef && evalInfo.totalKills > 0) {
-	    this._dimensions[4] = Math.min(1, (evalInfo.totalKills - evalInfo.stompKills - evalInfo.shellKills) / (1.0 * evalInfo.totalKills));
+	if(evalInfo.shellKills != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[4] = evalInfo.shellKills >= 1? 1:0;
+	}
+	if(evalInfo.totalKills != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[5] = (evalInfo.totalKills - evalInfo.stompKills - evalInfo.shellKills) >= 1? 1:0;
 	}
 	if(evalInfo.marioMode != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[5] = Math.min(1, evalInfo.marioMode);
+	    this._dimensions[6] = evalInfo.marioMode >= 1? 1:0;
 	}
-	if(evalInfo.numberOfGainedCoins != EvaluationInfo.MagicNumberUndef && evalInfo.totalNumberOfCoins > 0) {
-	    this._dimensions[6] = Math.min(1, evalInfo.numberOfGainedCoins / (1.0 * evalInfo.totalNumberOfCoins));
+	if(evalInfo.numberOfGainedCoins != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[7] = evalInfo.numberOfGainedCoins >= 1? 1:0;
 	}
     }
     
-    private boolean checkSliceSimilarity(int g1, int g2) {
-	String slice1 = this._library.getSlice(g1);
-	String slice2 = this._library.getSlice(g2);
-	return slice1.equals(slice2);
-    }
-    
-    private float getSimplicityFitness() {
+    public void calculateFitness() {
 	float total = 0;
 	float empty = 0;
 	for(int i=0; i<this._genes.length; i++) {
@@ -102,41 +99,7 @@ public class Chromosome implements Comparable<Chromosome>{
 		total += 1;
 	    }
 	}
-	return empty / total;
-    }
-    
-    public void calculateFitness(Chromosome[] pop) {
-//	if(pop.length == 0) {
-//	    this._fitness = 0.5 + 0.5 * this.getSimplicityFitness();
-//	    return;
-//	}
-	double finalMaxValue = 0;
-	for(Chromosome p:pop) {
-	    int maxValue = 0;
-	    for(int i=0; i<this._genes.length - 1; i++) {
-		int match1 = 0;
-		int match2 = 0;
-		for (int j = i; j < p._genes.length; j++) {
-		    if (this.checkSliceSimilarity(this._genes[i], p._genes[j])) {
-			match1 += 1;
-		    }
-		    if (this.checkSliceSimilarity(p._genes[i], this._genes[j])) {
-			match2 += 1;
-		    }
-		}
-		if (match1 > maxValue) {
-		    maxValue = match1;
-		}
-		if (match2 > maxValue) {
-		    maxValue = match2;
-		}
-	    }
-	    if(maxValue > finalMaxValue) {
-		finalMaxValue = maxValue;
-	    }
-	}
-//	this._fitness = 0.5 * (1 - ((double)finalMaxValue) / this._genes.length) + 0.5 * this.getSimplicityFitness();
-	this._fitness = this.getSimplicityFitness();
+	this._fitness = empty / total;
     }
     
     public Chromosome crossover(Chromosome c) {

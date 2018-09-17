@@ -7,9 +7,7 @@ import java.util.Comparator;
 
 import fi2pop.Chromosome;
 import fi2pop.GeneticAlgorithm;
-import shared.RepeatedLevelSlicesLibrary;
-import shared.SlicesLibrary;
-import shared.UniqueLevelSlicesLibrary;
+import shared.*;
 
 public class TestGenerator {
     public static void main(String[] args){

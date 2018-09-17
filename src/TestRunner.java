@@ -6,20 +6,24 @@ import java.util.Comparator;
 import java.util.Random;
 
 import ch.idsia.mario.engine.GlobalOptions;
-import ch.idsia.tools.RunMapEliteLevel;
 import mapelites.Chromosome;
-import mapelites.MapElites;
-import shared.RepeatedLevelSlicesLibrary;
-import shared.SlicesLibrary;
-import shared.UniqueLevelSlicesLibrary;
+import shared.*;
 
 public class TestRunner {
+    private static String getDimensionIndex(double[] dimensions) {
+	String result = "";
+	for(int i=0; i<dimensions.length; i++) {
+	    result += (int)Math.ceil(dimensions[i]) + ",";
+	}
+	return result.substring(0, result.length() - 1);
+    }
+    
     public static void main(String[] args) {
 	GlobalOptions.VisualizationOn = true;
 	GlobalOptions.MarioCeiling = false;
 	
 	Random rnd = new Random();
-	SlicesLibrary sl = new UniqueLevelSlicesLibrary();
+	SlicesLibrary sl = new RepeatedLevelSlicesLibrary();
         File directory = new File("levels/");
         File[] files = directory.listFiles(new FileFilter() {
             @Override
@@ -41,11 +45,17 @@ public class TestRunner {
             e.printStackTrace();
         }
 	Chromosome c = new Chromosome(sl, rnd, 3, 14);
-	c.stringInitialize("2830,858,2686,2813,1821,993,2831,2572,681,1890,2254,2687,3396,2733");
-	RunMapEliteLevel test = new RunMapEliteLevel(rnd, null);
-	System.out.println(c.toString());
-	test.setLevel(c.toString(), 3);
-	test.runLevel(true);
+	c.stringInitialize("2101,1737,1743,3695,2145,1472,3315,2127,3274,1856,2110,1526,931,879");
+	c.runAlgorithms(null);
+	c.calculateFitness();
+	System.out.println("Constarints: " + c.getConstraints());
+	System.out.println("Fitness: " + c.getFitness());
+	System.out.println("Dimensions: " + getDimensionIndex(c.getDimensions()));
+//	RunMapEliteLevel test = new RunMapEliteLevel(rnd, null);
+//	System.out.println(c.toString());
+//	test.setLevel(c.toString(), 3);
+//	EvaluationInfo eval = test.runLevel(true);
+//	System.out.println(eval.toString());
 //	MapElites map = new MapElites(sl, rnd, 3, 14, 5, 0.2, 0, 0);
 //	Chromosome[] chromosomes = new Chromosome[20];
 //	for(int i=0; i<20; i++) {

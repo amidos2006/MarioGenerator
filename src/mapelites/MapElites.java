@@ -20,11 +20,12 @@ public class MapElites {
     private double _inbreeding;
     private double _crossover;
     private double _mutation;
+    private double _eliteProb;
     private int _appendingSize;
     private int _chromosomeLength;
     
     public MapElites(SlicesLibrary lib, Random rnd, int appendingSize, int chromosomeLength, int popSize, 
-	    double inbreeding, double crossover, double mutation) {
+	    double inbreeding, double crossover, double mutation, double eliteProb) {
 	this._map = new HashMap<String, Cell>();
 	this._lib = lib;
 	this._rnd = rnd;
@@ -34,6 +35,7 @@ public class MapElites {
 	this._inbreeding = inbreeding;
 	this._crossover = crossover;
 	this._mutation = mutation;
+	this._eliteProb = eliteProb;
     }
     
     private Cell[] getCells() {
@@ -66,13 +68,13 @@ public class MapElites {
 	    }
 	    Chromosome c = null;
 	    if(this._rnd.nextDouble() < this._crossover) {
-		c = s1.getChromosome().crossover(s2.getChromosome());
+		c = s1.getChromosome(this._eliteProb).crossover(s2.getChromosome(this._eliteProb));
 		if(this._rnd.nextDouble() < this._mutation) {
 		    c = c.mutate();
 		}
 	    }
 	    else {
-		c = s1.getChromosome().mutate();
+		c = s1.getChromosome(this._eliteProb).mutate();
 	    }
 	    newBatch[i] = c;
 	}
@@ -93,7 +95,7 @@ public class MapElites {
 	    if(!this._map.containsKey(key)) {
 		this._map.put(key, new Cell(c.getDimensions(), this._popSize, this._rnd));
 	    }
-	    c.calculateFitness(this._map.get(key).getFeasible(true));
+	    c.calculateFitness();
 	    this._map.get(key).setChromosome(c);
 	}
     }
@@ -104,16 +106,19 @@ public class MapElites {
 	    String currentPath = path + this.getDimensionIndex(c.getDimensions()) + "/";
 	    File f = new File(currentPath);
 	    f.mkdir();
-	    Chromosome[] feasible = c.getFeasible(true);
+	    Chromosome elite = c.getElite();
 	    Chromosome[] infeasible = c.getInfeasible(true);
 	    int index = 0;
 	    PrintWriter resultWriter = new PrintWriter(currentPath + "result.txt", "UTF-8"); 
-	    for(Chromosome ch:feasible) {
+	    if(elite != null) {
 		PrintWriter writer = new PrintWriter(currentPath + index + ".txt", "UTF-8");
-		writer.println(ch.getGenes());
-		writer.println(ch.toString());
+		writer.println(elite.getGenes());
+		writer.println("Fitness: " + elite.getFitness());
+		writer.println("Constraints: " + elite.getConstraints());
+		writer.println("Dimensions: " + this.getDimensionIndex(elite.getDimensions()));
+		writer.println("Level:\n" + elite.toString());
 		writer.close();
-		resultWriter.println("Chromosome " + index + ": " + ch.getConstraints() + ", " + ch.getFitness());
+		resultWriter.println("Chromosome " + index + ": " + elite.getConstraints() + ", " + elite.getFitness());
 		index += 1;
 	    }
 	    for(Chromosome ch:infeasible) {
@@ -121,6 +126,7 @@ public class MapElites {
 		writer.println("Genes: " + ch.getGenes());
 		writer.println("Fitness: " + ch.getFitness());
 		writer.println("Constraints: " + ch.getConstraints());
+		writer.println("Dimensions: " + this.getDimensionIndex(ch.getDimensions()));
 		writer.println("Level:\n" + ch.toString());
 		writer.close();
 		resultWriter.println("Chromosome " + index + ": " + ch.getConstraints() + ", " + ch.getFitness());
@@ -133,35 +139,27 @@ public class MapElites {
     
     public int[] getStatistics() {
 	Cell[] cells = this.getCells();
-	int maxFeasible = 0;
-	int avgFeasible = 0;
-	int minFeasible = Integer.MAX_VALUE;
+	int numberElites = 0;
 	int maxInfeasible = 0;
 	int avgInfeasible = 0;
 	int minInfeasible = Integer.MAX_VALUE;
 	
 	for(Cell c:cells) {
-	    Chromosome[] feasible = c.getFeasible(true);
+	    Chromosome elite = c.getElite();
 	    Chromosome[] infeasible = c.getInfeasible(true);
-	    if(feasible.length > maxFeasible) {
-		maxFeasible = feasible.length;
+	    if(elite != null) {
+		numberElites += 1;
 	    }
 	    if(infeasible.length > maxInfeasible) {
 		maxInfeasible = infeasible.length;
 	    }
-	    if(feasible.length < minFeasible) {
-		minFeasible = feasible.length;
-	    }
 	    if(infeasible.length < minInfeasible) {
 		minInfeasible = infeasible.length;
 	    }
-	    avgFeasible += feasible.length;
 	    avgInfeasible += infeasible.length;
 	}
-	
-	avgFeasible /= cells.length;
 	avgInfeasible /= cells.length;
 	
-	return new int[] {cells.length, maxFeasible, avgFeasible, minFeasible, maxInfeasible, avgInfeasible, minInfeasible};
+	return new int[] {cells.length, numberElites, maxInfeasible, avgInfeasible, minInfeasible};
     }
 }

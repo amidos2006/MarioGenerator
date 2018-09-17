@@ -22,7 +22,8 @@ public class ParentEvaluator {
     public void writeChromosomes(Chromosome[] chromosomes) throws FileNotFoundException, UnsupportedEncodingException {
 	for(int i=0; i<chromosomes.length; i++) {
 	    PrintWriter writer = new PrintWriter(this._inputFolder + i + ".txt", "UTF-8");
-	    writer.print(chromosomes[i].getGenes());
+	    writer.println(chromosomes[i].getGenes());
+	    writer.println(chromosomes[i].toString());
 	    writer.close();
 	}
     }

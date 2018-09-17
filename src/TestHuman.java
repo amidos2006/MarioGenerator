@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.Random;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.ai.agents.AgentsPool;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.ai.tasks.Task;
@@ -14,13 +13,8 @@ import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
-import ch.idsia.tools.RunMapEliteLevel;
-import competition.cig.robinbaumgarten.AStarAgent;
 import mapelites.Chromosome;
-import mapelites.MapElites;
-import shared.RepeatedLevelSlicesLibrary;
-import shared.SlicesLibrary;
-import shared.UniqueLevelSlicesLibrary;
+import shared.*;
 
 public class TestHuman {
     public static void main(String[] args) {
@@ -28,7 +22,7 @@ public class TestHuman {
 	GlobalOptions.MarioCeiling = false;
 	
 	Random rnd = new Random();
-	SlicesLibrary sl = new UniqueLevelSlicesLibrary();
+	SlicesLibrary sl = new RepeatedLevelSlicesLibrary();
         File directory = new File("levels/");
         File[] files = directory.listFiles(new FileFilter() {
             @Override
@@ -50,7 +44,7 @@ public class TestHuman {
             e.printStackTrace();
         }
 	Chromosome c = new Chromosome(sl, rnd, 3, 14);
-	c.stringInitialize("982,1426,3833,1520,570,3103,2078,4121,1544,328,1721,2538,3911,4182");
+	c.stringInitialize("3485,1608,2500,173,2890,841,2795,1990,3244,2047,1947,236,1691,3610");
 	Level lvl = Level.initializeLevel(c.toString(), 3, true);
 	
 	Agent controller = new HumanKeyboardAgent();
