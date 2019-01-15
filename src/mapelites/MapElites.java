@@ -38,7 +38,7 @@ public class MapElites {
 	this._eliteProb = eliteProb;
     }
     
-    private Cell[] getCells() {
+    public Cell[] getCells() {
 	Cell[] cells = new Cell[this._map.size()];
 	int index = 0;
 	for(Entry<String,Cell> pair : this._map.entrySet()) {
@@ -51,7 +51,7 @@ public class MapElites {
     public Chromosome[] randomChromosomes(int batchSize) {
 	Chromosome[] newBatch = new Chromosome[batchSize];
 	for(int i=0; i<newBatch.length; i++) {
-	    newBatch[i] = new Chromosome(this._lib,this._rnd, this._appendingSize, this._chromosomeLength);
+	    newBatch[i] = new Chromosome(this._rnd, this._lib, this._chromosomeLength, this._appendingSize);
 	    newBatch[i].randomInitialize();
 	}
 	return newBatch;
@@ -68,13 +68,13 @@ public class MapElites {
 	    }
 	    Chromosome c = null;
 	    if(this._rnd.nextDouble() < this._crossover) {
-		c = s1.getChromosome(this._eliteProb).crossover(s2.getChromosome(this._eliteProb));
+		c = (Chromosome)s1.getChromosome(this._eliteProb).crossover(s2.getChromosome(this._eliteProb));
 		if(this._rnd.nextDouble() < this._mutation) {
-		    c = c.mutate();
+		    c = (Chromosome)c.mutate();
 		}
 	    }
 	    else {
-		c = s1.getChromosome(this._eliteProb).mutate();
+		c = (Chromosome)s1.getChromosome(this._eliteProb).mutate();
 	    }
 	    newBatch[i] = c;
 	}
@@ -95,7 +95,6 @@ public class MapElites {
 	    if(!this._map.containsKey(key)) {
 		this._map.put(key, new Cell(c.getDimensions(), this._popSize, this._rnd));
 	    }
-	    c.calculateFitness();
 	    this._map.get(key).setChromosome(c);
 	}
     }
@@ -137,7 +136,7 @@ public class MapElites {
 	
     }
     
-    public int[] getStatistics() {
+    public double[] getStatistics() {
 	Cell[] cells = this.getCells();
 	int numberElites = 0;
 	int maxInfeasible = 0;
@@ -160,6 +159,6 @@ public class MapElites {
 	}
 	avgInfeasible /= cells.length;
 	
-	return new int[] {cells.length, numberElites, maxInfeasible, avgInfeasible, minInfeasible};
+	return new double[] {cells.length, numberElites, maxInfeasible, avgInfeasible, minInfeasible};
     }
 }

@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import mapelites.Chromosome;
-
 public class ParentEvaluator {
     private String _inputFolder;
     private String _outputFolder;
@@ -19,17 +17,16 @@ public class ParentEvaluator {
 	this._outputFolder = outputFolder;
     }
     
-    public void writeChromosomes(Chromosome[] chromosomes) throws FileNotFoundException, UnsupportedEncodingException {
+    public void writeChromosomes(String[] chromosomes) throws FileNotFoundException, UnsupportedEncodingException {
 	for(int i=0; i<chromosomes.length; i++) {
 	    PrintWriter writer = new PrintWriter(this._inputFolder + i + ".txt", "UTF-8");
-	    writer.println(chromosomes[i].getGenes());
-	    writer.println(chromosomes[i].toString());
+	    writer.print(chromosomes[i]);
 	    writer.close();
 	}
     }
     
-    public boolean checkChromosomes(Chromosome[] chromosomes) {
-	for(int i=0; i<chromosomes.length; i++) {
+    public boolean checkChromosomes(int size) {
+	for(int i=0; i<size; i++) {
 	    File f = new File(this._outputFolder + i + ".txt");
 	    if(!f.exists()) {
 		return false;
@@ -38,15 +35,16 @@ public class ParentEvaluator {
 	return true;
     }
     
-    public void assignChromosomes(Chromosome[] chromosomes) throws IOException {
-	for(int i=0; i<chromosomes.length; i++) {
-	    String values = Files.readAllLines(Paths.get(this._outputFolder, i + ".txt")).get(0);
-	    chromosomes[i].constraintsDimensionsInitialize(values);
+    public String[] assignChromosomes(int size) throws IOException {
+	String[] results = new String[size];
+	for(int i=0; i<size; i++) {
+	    results[i] = Files.readAllLines(Paths.get(this._outputFolder, i + ".txt")).get(0);
 	}
+	return results;
     }
     
-    public void clearOutputFiles(Chromosome[] chromosomes) {
-	for(int i=0; i<chromosomes.length; i++) {
+    public void clearOutputFiles(int size) {
+	for(int i=0; i<size; i++) {
 	    File f = new File(this._outputFolder + i + ".txt");
 	    f.delete();
 	}

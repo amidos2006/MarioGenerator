@@ -7,10 +7,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Random;
-
-import mapelites.Chromosome;
-import shared.SlicesLibrary;
 
 public class ChildEvaluator {
     private int _id;
@@ -36,35 +32,27 @@ public class ChildEvaluator {
 	return true;
     }
     
-    public Chromosome[] readChromosomes(SlicesLibrary lib, Random rnd, int appendingSize, int chromosomeLength) throws IOException {
-	Chromosome[] result = new Chromosome[this._size];
+    public String[] readChromosomes() throws IOException {
+	String[] result = new String[this._size];
 	int startIndex = this._id * this._size;
 	for(int i=0; i<this._size; i++) {
-	    result[i] = new Chromosome(lib, rnd, appendingSize, chromosomeLength);
-	    String level = Files.readAllLines(Paths.get(this._inputFolder, (startIndex + i) + ".txt")).get(0);
-	    result[i].stringInitialize(level);
+	    result[i] = Files.readAllLines(Paths.get(this._inputFolder, (startIndex + i) + ".txt")).get(0);
 	}
 	return result;
     }
     
-    public void writeResults(Chromosome[] chromosomes) throws FileNotFoundException, UnsupportedEncodingException {
+    public void writeResults(String[] values) throws FileNotFoundException, UnsupportedEncodingException {
 	int startIndex = this._id * this._size;
-	for(int i=0; i<chromosomes.length; i++) {
+	for(int i=0; i<values.length; i++) {
 	    PrintWriter writer = new PrintWriter(this._outputFolder + (startIndex + i) + ".txt", "UTF-8");
-	    String result = "" + chromosomes[i].getConstraints();
-	    double[] dimensions = chromosomes[i].getDimensions();
-	    for(int j=0; j<dimensions.length; j++) {
-		result += "," + dimensions[j];
-	    }
-	    writer.println(result);
-	    writer.println(chromosomes[i].toString());
+	    writer.print(values[i]);
 	    writer.close();
 	}
     }
     
-    public void clearInputFiles(Chromosome[] chromosomes) {
+    public void clearInputFiles() {
 	int startIndex = this._id * this._size;
-	for(int i=0; i<chromosomes.length; i++) {
+	for(int i=0; i<this._size; i++) {
 	    File f = new File(this._inputFolder + (startIndex + i) + ".txt");
 	    f.delete();
 	}

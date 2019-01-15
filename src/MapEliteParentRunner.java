@@ -20,7 +20,7 @@ import shared.SlicesLibrary;
 import shared.UniqueLevelSlicesLibrary;
 import shared.evaluator.ParentEvaluator;
 
-public class ParentRunner {
+public class MapEliteParentRunner {
     private static void deleteDirectory(File directoryToBeDeleted) {
 	File[] allContents = directoryToBeDeleted.listFiles();
 	if (allContents != null) {
@@ -32,10 +32,10 @@ public class ParentRunner {
     }
     
     private static void appendInfo(String path, int iteration, MapElites map) throws FileNotFoundException {
-	int[] stats = map.getStatistics();
+	double[] stats = map.getStatistics();
 	PrintWriter pw = new PrintWriter(new FileOutputStream(new File(path + "result.txt"), true));
 	String result = "";
-	for(int v:stats) {
+	for(double v:stats) {
 	    result += v + ", ";
 	}
 	result = result.substring(0, result.length() - 1);
@@ -113,16 +113,24 @@ public class ParentRunner {
         while(true) {
             try {
         	System.out.println("Writing in Files for Children");
-		parent.writeChromosomes(chromosomes);
+        	String[] levels = new String[chromosomes.length];
+        	for(int i=0; i<chromosomes.length; i++) {
+        	    levels[i] = "";
+        	    levels[i] += chromosomes[i].getGenes() + "\n" + chromosomes[i].toString() + "\n";
+        	}
+		parent.writeChromosomes(levels);
 		System.out.println("Waiting for children to finish");
-		while(!parent.checkChromosomes(chromosomes)) {
+		while(!parent.checkChromosomes(chromosomes.length)) {
 		    Thread.sleep(500);
 		}
 		Thread.sleep(1000);
 		System.out.println("Reading and assigning children results");
-		parent.assignChromosomes(chromosomes);
+		String[] values = parent.assignChromosomes(chromosomes.length);
+		for(int i=0; i<chromosomes.length; i++) {
+		    chromosomes[i].childEvaluationInitialization(values[i]);
+		}
 		map.assignChromosomes(chromosomes);
-		parent.clearOutputFiles(chromosomes);
+		parent.clearOutputFiles(chromosomes.length);
 		System.out.println("Writing results");
 		File f = new File(parameters.get("resultFolder") + iteration + "/");
 		f.mkdir();

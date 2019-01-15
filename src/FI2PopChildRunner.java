@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Random;
 
 import ch.idsia.mario.engine.GlobalOptions;
-import mapelites.Chromosome;
+import fi2pop.Chromosome;
 import shared.RepeatedLevelSlicesLibrary;
 import shared.SlicesLibrary;
 import shared.UniqueLevelSlicesLibrary;
 import shared.evaluator.ChildEvaluator;
 
-public class ChildRunner {
+public class FI2PopChildRunner {
     private static HashMap<String, String> readParameters(String filename) throws IOException {
 	List<String> lines = Files.readAllLines(Paths.get("", filename));
 	HashMap<String, String> parameters = new HashMap<String, String>();
@@ -45,14 +45,6 @@ public class ChildRunner {
 	parameters.put("agentType", "AStarAgent");
 	if(args.length > 2) {
 	    parameters.put("agentType", args[2]);
-	}
-	parameters.put("agentSTD", "1");
-	if(args.length > 3) {
-	    parameters.put("agentSTD", args[3]);
-	}
-	parameters.put("numTrials", "1");
-	if(args.length > 4) {
-	    parameters.put("agentSTD", args[4]);
 	}
 	ChildEvaluator child = new ChildEvaluator(id, size, parameters.get("inputFolder"), parameters.get("outputFolder"));
 	SlicesLibrary lib = new RepeatedLevelSlicesLibrary();
@@ -83,7 +75,7 @@ public class ChildRunner {
         int appendingSize = Integer.parseInt(parameters.get("appendingSize"));
         int chromosomeLength = Integer.parseInt(parameters.get("chromosomeLength"));
         Chromosome[] chromosomes = null;
-	while(true) {
+        while(true) {
 	    try {
 		System.out.println("Waiting for parent");
 		while(!child.checkChromosomes()) {
@@ -91,19 +83,29 @@ public class ChildRunner {
 		}
 		Thread.sleep(1000);
 		System.out.println("Reading children values");
-		chromosomes = child.readChromosomes(lib, rnd, appendingSize, chromosomeLength);
+		String[] levels = child.readChromosomes();
+		chromosomes = new Chromosome[levels.length];
+		for(int i=0; i<chromosomes.length; i++) {
+		    chromosomes[i] = new Chromosome(rnd, lib, chromosomeLength, appendingSize);
+		    chromosomes[i].stringInitialize(levels[i]);
+		}
 		int index = 0;
 		for(Chromosome c:chromosomes) {
 		    System.out.println("\tRunning Child number: " + ++index);
 		    c.runAlgorithms(parameters);
 		}
-		child.clearInputFiles(chromosomes);
+		child.clearInputFiles();
 		System.out.println("Writing Chromosomes results.");
-		child.writeResults(chromosomes);
+		String[] values = new String[chromosomes.length];
+		for(int i=0; i<values.length; i++) {
+		    values[i] = chromosomes[i].getConstraints() + "," + chromosomes[i].getFitness() + "\n";
+		    values[i] += chromosomes[i].getGenes() + "\n";
+		    values[i] += chromosomes[i].toString() + "\n";
+		}
+		child.writeResults(values);
 	    } catch (Exception e) {
 		e.printStackTrace();
 	    }
 	}
-	
     }
 }

@@ -44,10 +44,9 @@ public class TestRunner {
         catch (Exception e) {
             e.printStackTrace();
         }
-	Chromosome c = new Chromosome(sl, rnd, 3, 14);
-	c.stringInitialize("2101,1737,1743,3695,2145,1472,3315,2127,3274,1856,2110,1526,931,879");
+	Chromosome c = new Chromosome(rnd, sl, 14, 3);
+	c.stringInitialize("2577,1666,400,1314,344,3478,2520,1944,3638,2263,2798,411,2587,3610");
 	c.runAlgorithms(null);
-	c.calculateFitness();
 	System.out.println("Constarints: " + c.getConstraints());
 	System.out.println("Fitness: " + c.getFitness());
 	System.out.println("Dimensions: " + getDimensionIndex(c.getDimensions()));
