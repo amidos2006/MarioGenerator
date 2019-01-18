@@ -42,10 +42,6 @@ public class FI2PopChildRunner {
 	} catch (IOException e1) {
 	    e1.printStackTrace();
 	}
-	parameters.put("agentType", "AStarAgent");
-	if(args.length > 2) {
-	    parameters.put("agentType", args[2]);
-	}
 	ChildEvaluator child = new ChildEvaluator(id, size, parameters.get("inputFolder"), parameters.get("outputFolder"));
 	SlicesLibrary lib = new RepeatedLevelSlicesLibrary();
 	if(parameters.get("slicesType").toLowerCase().contains("unique")) {

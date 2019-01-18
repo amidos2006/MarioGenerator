@@ -44,7 +44,7 @@ public class TestHuman {
             e.printStackTrace();
         }
 	Chromosome c = new Chromosome(rnd, sl, 14, 3);
-	c.stringInitialize("2154,1580,1082,1314,1581,3395,432,1944,3638,2263,2798,236,2587,3610");
+	c.stringInitialize("2101,3165,3709,1449,2280,1650,3632,3559,2334,1856,2110,1526,2898,349");
 	Level lvl = Level.initializeLevel(c.toString(), 3, true);
 	
 	Agent controller = new HumanKeyboardAgent();
@@ -52,7 +52,7 @@ public class TestHuman {
         options.setAgent(controller);
         Task task = new ProgressTask(options);
         options.setMaxFPS(false);
-        options.setPauseWorld(true);
+        options.setPauseWorld(false);
         options.setVisualization(true);
         options.setNumberOfTrials(1);
         options.setMatlabFileName("");

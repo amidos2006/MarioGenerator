@@ -40,7 +40,7 @@ public class Chromosome extends shared.Chromosome{
     public void runAlgorithms(HashMap<String, String> parameters) {
 	RunMapEliteLevel test = new RunMapEliteLevel(this._rnd, parameters);
 	test.setLevel(this.toString(), this._appendingSize);
-	EvaluationInfo evalInfo = test.runLevel(false);
+	EvaluationInfo evalInfo = test.runLevel(true);
 	this._constraints = Math.min(1, (1.0 * evalInfo.lengthOfLevelPassedCells) / (evalInfo.totalLengthOfLevelCells - this._appendingSize));
 	if(evalInfo.numOfJumps != EvaluationInfo.MagicNumberUndef) {
 	    this._dimensions[0] = evalInfo.numOfJumps >= 1? 1:0;

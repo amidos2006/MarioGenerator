@@ -3,10 +3,10 @@ import java.io.FileFilter;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Random;
 
 import ch.idsia.mario.engine.GlobalOptions;
-import mapelites.Chromosome;
 import shared.*;
 
 public class TestRunner {
@@ -44,12 +44,22 @@ public class TestRunner {
         catch (Exception e) {
             e.printStackTrace();
         }
-	Chromosome c = new Chromosome(rnd, sl, 14, 3);
-	c.stringInitialize("2577,1666,400,1314,344,3478,2520,1944,3638,2263,2798,411,2587,3610");
-	c.runAlgorithms(null);
+//	mapelites.Chromosome c = new mapelites.Chromosome(rnd, sl, 14, 3);
+//	c.stringInitialize("3233,1015,1474,1955,1390,952,3071,1692,2315,1581,2153,2771,2314,131");
+//	c.runAlgorithms(null);
+//	System.out.println("Constarints: " + c.getConstraints());
+//	System.out.println("Fitness: " + c.getFitness());
+//	System.out.println("Dimensions: " + getDimensionIndex(c.getDimensions()));
+	
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put("experimentType", "LimitedAgent");
+        parameters.put("agentType", "LimitedJump");
+	fi2pop.Chromosome c = new fi2pop.Chromosome(rnd, sl, 14, 3);
+	c.stringInitialize("3480,2798,2773,1360,1870,3702,1088,236,2058,3322,2039,1871,1457,399");
+	c.runAlgorithms(parameters);
 	System.out.println("Constarints: " + c.getConstraints());
 	System.out.println("Fitness: " + c.getFitness());
-	System.out.println("Dimensions: " + getDimensionIndex(c.getDimensions()));
+	
 //	RunMapEliteLevel test = new RunMapEliteLevel(rnd, null);
 //	System.out.println(c.toString());
 //	test.setLevel(c.toString(), 3);

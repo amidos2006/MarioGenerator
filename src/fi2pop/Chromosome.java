@@ -3,6 +3,7 @@ package fi2pop;
 import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.tools.AgentResultObject;
 import ch.idsia.tools.runners.RunLimitedAgentsLevel;
+import ch.idsia.tools.runners.RunPunishingModelLevel;
 import shared.SlicesLibrary;
 
 import java.util.HashMap;
@@ -27,9 +28,19 @@ public class Chromosome extends shared.Chromosome {
     }
 
     public void runAlgorithms(HashMap<String, String> parameters) {
-	RunLimitedAgentsLevel rgl = new RunLimitedAgentsLevel(this._rnd, parameters);
-	rgl.setLevel(this.toString(), this._appendingSize);
-	AgentResultObject aro = rgl.runLevel(false);
+	AgentResultObject aro = null;
+	switch (parameters.get("experimentType").trim().toLowerCase()) {
+	case "punishingmodel":
+	    RunPunishingModelLevel rpl = new RunPunishingModelLevel(this._rnd, parameters);
+	    rpl.setLevel(this.toString(), this._appendingSize);
+	    aro = rpl.runLevel(true);
+	    break;
+	case "limitedagent":
+	    RunLimitedAgentsLevel rgl = new RunLimitedAgentsLevel(this._rnd, parameters);
+	    rgl.setLevel(this.toString(), this._appendingSize);
+	    aro = rgl.runLevel(true);
+	    break;
+	}
 	if(aro.perftectAgentWin == Mario.STATUS_WIN && aro.limitedAgentWin == Mario.STATUS_DEAD) {
 	    this._constraints = 1;
 	}
