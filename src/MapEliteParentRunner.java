@@ -60,6 +60,7 @@ public class MapEliteParentRunner {
     public static void main(String[] args) {
 	GlobalOptions.VisualizationOn = false;
 	GlobalOptions.MarioCeiling = false;
+	GlobalOptions.SceneGeneration = true;
 	
 	HashMap<String, String> parameters = null;
 	try {

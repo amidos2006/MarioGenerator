@@ -22,7 +22,12 @@ public class Chromosome extends shared.Chromosome{
     
     public void childEvaluationInitialization(String values) {
 	String[] parts = values.split(",");
-	this._constraints = Double.parseDouble(parts[0]);
+	double newConstraints = Double.parseDouble(parts[0]);
+//	if(this._algorithmRan && this._constraints <= newConstraints) {
+//	    return;
+//	}
+//	this._algorithmRan = true;
+	this._constraints = newConstraints;
 	this._fitness = Double.parseDouble(parts[1]);
 	for(int i=2; i<parts.length; i++) {
 	    this._dimensions[i-2] = Double.parseDouble(parts[i]);
@@ -68,7 +73,7 @@ public class Chromosome extends shared.Chromosome{
 	}
 	
 	if (this._constraints >= 1) {
-	    this.calculateFitness();
+	    this.calculateFitness(parameters.get("fitnessType").trim().toLowerCase().equals("entropy"));
 	}
     }   
 }

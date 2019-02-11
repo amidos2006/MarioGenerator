@@ -75,13 +75,17 @@ public class GeneticAlgorithm {
 		feasible.add(this._population[i]);
 	    }
 	}
-	Collections.sort(feasible);
-	if(descending) {
-	    Collections.reverse(feasible);
+	if(feasible.size() > 0) {
+	    Collections.sort(feasible);
+	    if (descending) {
+		Collections.reverse(feasible);
+	    }
 	}
-	Collections.sort(infeasible);
-	if(descending) {
-	    Collections.reverse(infeasible);
+	if(infeasible.size() > 0) {
+	    Collections.sort(infeasible);
+	    if (descending) {
+		Collections.reverse(infeasible);
+	    }
 	}
 	return new Chromosome[][] {feasible.toArray(new Chromosome[0]), infeasible.toArray(new Chromosome[0]) };
     }
@@ -109,12 +113,15 @@ public class GeneticAlgorithm {
 	}
 	for (int i = 0; i < this._elitism; i++) {
 	    if (i < feasibleInfeasible[0].length) {
-		newPopulation[newPopulation.length - 1 - i] = feasibleInfeasible[0][i];
+		newPopulation[newPopulation.length - 1 - i] = feasibleInfeasible[0][feasibleInfeasible[0].length - 1 - i];
 	    } else {
-		newPopulation[newPopulation.length - 1 - i] = feasibleInfeasible[1][i];
+		newPopulation[newPopulation.length - 1 - i] = feasibleInfeasible[1][feasibleInfeasible[1].length - 1 - (i - feasibleInfeasible[0].length)];
 	    }
 	}
 	this._population = newPopulation;
+	for(int i=0; i<this._populationSize; i++) {
+	    this._population[i].advanceAge();
+	}
     }
     
     public void writePopulation(String path) throws FileNotFoundException, UnsupportedEncodingException {
@@ -128,6 +135,7 @@ public class GeneticAlgorithm {
 	    writer.println("Genes: " + ch.getGenes());
 	    writer.println("Fitness: " + ch.getFitness());
 	    writer.println("Constraints: " + ch.getConstraints());
+	    writer.println("Age: " + ch.getAge());
 	    writer.println("Level:\n" + ch.toString());
 	    writer.close();
 	    resultWriter.println("Chromosome " + index + ": " + ch.getConstraints() + ", " + ch.getFitness());
@@ -138,6 +146,7 @@ public class GeneticAlgorithm {
 	    writer.println("Genes: " + ch.getGenes());
 	    writer.println("Fitness: " + ch.getFitness());
 	    writer.println("Constraints: " + ch.getConstraints());
+	    writer.println("Age: " + ch.getAge());
 	    writer.println("Level:\n" + ch.toString());
 	    writer.close();
 	    resultWriter.println("Chromosome " + index + ": " + ch.getConstraints() + ", " + ch.getFitness());

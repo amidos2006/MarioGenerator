@@ -33,6 +33,7 @@ public class FI2PopChildRunner {
     public static void main(String[] args) {
 	GlobalOptions.VisualizationOn = false;
 	GlobalOptions.MarioCeiling = false;
+	GlobalOptions.SceneGeneration = true;
 	
 	int id = Integer.parseInt(args[0]);
 	int size = Integer.parseInt(args[1]);

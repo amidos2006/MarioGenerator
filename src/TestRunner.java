@@ -21,6 +21,7 @@ public class TestRunner {
     public static void main(String[] args) {
 	GlobalOptions.VisualizationOn = true;
 	GlobalOptions.MarioCeiling = false;
+	GlobalOptions.SceneGeneration = true;
 	
 	Random rnd = new Random();
 	SlicesLibrary sl = new RepeatedLevelSlicesLibrary();
@@ -44,18 +45,23 @@ public class TestRunner {
         catch (Exception e) {
             e.printStackTrace();
         }
+        
+//        HashMap<String, String> parameters = new HashMap<>();
+//        parameters.put("fitnessType", "entropy");
+//        parameters.put("agentType", "AStarAgent");
 //	mapelites.Chromosome c = new mapelites.Chromosome(rnd, sl, 14, 3);
-//	c.stringInitialize("3233,1015,1474,1955,1390,952,3071,1692,2315,1581,2153,2771,2314,131");
-//	c.runAlgorithms(null);
+//	c.stringInitialize("2832,2252,652,95,2280,1650,3349,2756,592,1856,2110,1864,2114,761");
+//	c.runAlgorithms(parameters);
 //	System.out.println("Constarints: " + c.getConstraints());
 //	System.out.println("Fitness: " + c.getFitness());
 //	System.out.println("Dimensions: " + getDimensionIndex(c.getDimensions()));
 	
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put("experimentType", "LimitedAgent");
-        parameters.put("agentType", "LimitedJump");
+        parameters.put("agentType", "NoRun");
+        parameters.put("fitnessType", "entropy");
 	fi2pop.Chromosome c = new fi2pop.Chromosome(rnd, sl, 14, 3);
-	c.stringInitialize("3480,2798,2773,1360,1870,3702,1088,236,2058,3322,2039,1871,1457,399");
+	c.stringInitialize("1370,2682,1931,758,2613,2795,2756,405,3436,2778,2175,1239,3638,406");
 	c.runAlgorithms(parameters);
 	System.out.println("Constarints: " + c.getConstraints());
 	System.out.println("Fitness: " + c.getFitness());

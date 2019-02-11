@@ -18,6 +18,7 @@ public class TestingGeneration {
     public static void main(String[] args) throws IOException {
 	GlobalOptions.VisualizationOn = false;
 	GlobalOptions.MarioCeiling = false;
+	GlobalOptions.SceneGeneration = true;
 	
 	Random rnd = new Random();
 	SlicesLibrary sl = new RepeatedLevelSlicesLibrary();

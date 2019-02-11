@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class Chromosome extends shared.Chromosome {
+    
+    private int _age;
 
     public Chromosome(Random rnd, SlicesLibrary lib, int size, int appendingSize) {
 	super(rnd, lib, size, appendingSize);
@@ -19,12 +21,26 @@ public class Chromosome extends shared.Chromosome {
 	this._library = lib;
 	this._fitness = 0;
 	this._constraints = 0;
+	this._age = 0;
     }
     
     public void childEvaluationInitialization(String values) {
 	String[] parts = values.split(",");
-	this._constraints = Double.parseDouble(parts[0]);
-	this._fitness = Double.parseDouble(parts[1]);
+	double newConstraints = Double.parseDouble(parts[0]);
+//	if(this._algorithmRan && this._constraints <= newConstraints) {
+//	    return;
+//	}
+//	this._algorithmRan = true;
+	this._constraints = newConstraints;
+	this._fitness = Double.parseDouble(parts[1]);;
+    }
+    
+    public int getAge() {
+	return this._age;
+    }
+    
+    public void advanceAge() {
+	this._age += 1;
     }
 
     public void runAlgorithms(HashMap<String, String> parameters) {
@@ -41,7 +57,7 @@ public class Chromosome extends shared.Chromosome {
 	    aro = rgl.runLevel(true);
 	    break;
 	}
-	if(aro.perftectAgentWin == Mario.STATUS_WIN && aro.limitedAgentWin == Mario.STATUS_DEAD) {
+	if(aro.perftectAgentWin == Mario.STATUS_WIN && aro.limitedAgentWin != Mario.STATUS_WIN) {
 	    this._constraints = 1;
 	}
 	else {
@@ -49,7 +65,7 @@ public class Chromosome extends shared.Chromosome {
 	}
 	
 	if (this._constraints >= 1) {
-	    this.calculateFitness();
+	    this.calculateFitness(parameters.get("fitnessType").trim().toLowerCase().equals("entropy"));
 	}
     }
 

@@ -20,6 +20,7 @@ public class TestHuman {
     public static void main(String[] args) {
 	GlobalOptions.VisualizationOn = true;
 	GlobalOptions.MarioCeiling = false;
+	GlobalOptions.SceneGeneration = true;
 	
 	Random rnd = new Random();
 	SlicesLibrary sl = new RepeatedLevelSlicesLibrary();
@@ -44,7 +45,7 @@ public class TestHuman {
             e.printStackTrace();
         }
 	Chromosome c = new Chromosome(rnd, sl, 14, 3);
-	c.stringInitialize("2101,3165,3709,1449,2280,1650,3632,3559,2334,1856,2110,1526,2898,349");
+	c.stringInitialize("1805,2252,652,95,3178,1650,3349,2756,592,1856,2110,1864,2114,3248");
 	Level lvl = Level.initializeLevel(c.toString(), 3, true);
 	
 	Agent controller = new HumanKeyboardAgent();
@@ -52,7 +53,7 @@ public class TestHuman {
         options.setAgent(controller);
         Task task = new ProgressTask(options);
         options.setMaxFPS(false);
-        options.setPauseWorld(false);
+        options.setPauseWorld(true);
         options.setVisualization(true);
         options.setNumberOfTrials(1);
         options.setMatlabFileName("");
