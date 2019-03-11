@@ -53,7 +53,7 @@ public class TestHuman {
         options.setAgent(controller);
         Task task = new ProgressTask(options);
         options.setMaxFPS(false);
-        options.setPauseWorld(true);
+        options.setPauseWorld(false);
         options.setVisualization(true);
         options.setNumberOfTrials(1);
         options.setMatlabFileName("");

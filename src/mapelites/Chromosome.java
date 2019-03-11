@@ -13,7 +13,7 @@ public class Chromosome extends shared.Chromosome{
     
     public Chromosome(Random rnd, SlicesLibrary lib, int size, int appendingSize) {
 	super(rnd, lib, size, appendingSize);
-	this._dimensions = new double[8];
+	this._dimensions = new double[12];
     }
     
     public double[] getDimensions() {
@@ -51,25 +51,37 @@ public class Chromosome extends shared.Chromosome{
 	    this._dimensions[0] = evalInfo.numOfJumps >= 1? 1:0;
 	}
 	if(evalInfo.jumpHeight != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[1] = evalInfo.jumpHeight >= 60.0? 1:0;
+	    this._dimensions[1] = evalInfo.jumpHeight <= 30.0? 1:0;
+	}
+	if(evalInfo.jumpHeight != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[2] = evalInfo.jumpHeight >= 60.0? 1:0;
 	}
 	if(evalInfo.jumpDistance != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[2] = evalInfo.jumpDistance >= 96.0? 1:0;
+	    this._dimensions[3] = evalInfo.jumpDistance <= 48.0? 1:0;
+	}
+	if(evalInfo.jumpDistance != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[4] = evalInfo.jumpDistance >= 96.0? 1:0;
 	}
 	if(evalInfo.stompKills != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[3] = evalInfo.stompKills >= 1? 1:0;
+	    this._dimensions[5] = evalInfo.stompKills >= 1? 1:0;
 	}
 	if(evalInfo.shellKills != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[4] = evalInfo.shellKills >= 1? 1:0;
+	    this._dimensions[6] = evalInfo.shellKills >= 1? 1:0;
 	}
 	if(evalInfo.totalKills != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[5] = evalInfo.totalKills - evalInfo.shellKills - evalInfo.stompKills >= 1? 1:0;
+	    this._dimensions[7] = evalInfo.totalKills - evalInfo.shellKills - evalInfo.stompKills >= 1? 1:0;
 	}
 	if(evalInfo.marioMode != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[6] = evalInfo.marioMode >= 1? 1:0;
+	    this._dimensions[8] = evalInfo.marioMode >= 1? 1:0;
 	}
 	if(evalInfo.numberOfGainedCoins != EvaluationInfo.MagicNumberUndef) {
-	    this._dimensions[7] = evalInfo.numberOfGainedCoins >= 1? 1:0;
+	    this._dimensions[9] = evalInfo.numberOfGainedCoins >= 1? 1:0;
+	}
+	if(evalInfo.breakBlock != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[10] = evalInfo.breakBlock >= 1? 1:0;
+	}
+	if(evalInfo.coinBlock != EvaluationInfo.MagicNumberUndef) {
+	    this._dimensions[11] = evalInfo.coinBlock >= 1? 1:0;
 	}
 	
 	if (this._constraints >= 1) {
